@@ -100,6 +100,11 @@ fun TipScreen() {
             }
             Spacer(Modifier.height(24.dp))
             DiscountRadioGroup(selectedPercent = discountPct)
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = "Скидка: ${formatMoney(discount)}",
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }

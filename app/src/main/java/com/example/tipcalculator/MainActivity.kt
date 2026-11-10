@@ -36,6 +36,8 @@ fun TipScreen() {
     var orderSumText by remember { mutableStateOf("") }
     var dishCountText by remember { mutableStateOf("") }
 
+    var tipPercent by remember { mutableFloatStateOf(0f) }
+
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
             modifier = Modifier
@@ -55,6 +57,22 @@ fun TipScreen() {
                 onValueChange = { dishCountText = it },
                 fieldWidth = 60.dp
             )
+
+            Spacer(Modifier.height(24.dp))
+            Text("Чаевые: ${tipPercent.toInt()}%")
+            Slider(
+                value = tipPercent,
+                onValueChange = { tipPercent = it },
+                valueRange = 0f..25f,
+                steps = 4
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("0")
+                Text("25")
+            }
         }
     }
 }

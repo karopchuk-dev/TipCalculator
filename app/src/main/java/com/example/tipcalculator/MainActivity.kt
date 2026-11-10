@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.tipcalculator.ui.theme.TipCalculatorTheme
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -39,6 +40,9 @@ fun TipScreen() {
 
     var tipPercent by remember { mutableFloatStateOf(0f) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     val orderSum = orderSumText.replace(',', '.').toDoubleOrNull() ?: 0.0
     val dishCount = dishCountText.toIntOrNull() ?: 0
 
@@ -47,7 +51,10 @@ fun TipScreen() {
     val discount = calculateDiscount(orderSum, discountPct)
     val total = calculateTotal(orderSum, tip, discount)
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -71,7 +78,16 @@ fun TipScreen() {
             Text("Чаевые: ${tipPercent.toInt()}%")
             Slider(
                 value = tipPercent,
-                onValueChange = { tipPercent = it },
+                onValueChange = { newValue ->
+                    if (newValue != tipPercent) {
+                        tipPercent = newValue
+                        val newTip = calculateTip(orderSum, newValue.roundToInt())
+                        scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar("Сумма чаевых: ${formatMoney(newTip)}")
+                        }
+                    }
+                },
                 valueRange = 0f..25f,
                 steps = 4
             )

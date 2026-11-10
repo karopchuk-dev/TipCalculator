@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.tipcalculator.ui.theme.TipCalculatorTheme
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +38,14 @@ fun TipScreen() {
     var dishCountText by remember { mutableStateOf("") }
 
     var tipPercent by remember { mutableFloatStateOf(0f) }
+
+    val orderSum = orderSumText.replace(',', '.').toDoubleOrNull() ?: 0.0
+    val dishCount = dishCountText.toIntOrNull() ?: 0
+
+    val tip = calculateTip(orderSum, tipPercent.roundToInt())
+    val discountPct = discountPercent(dishCount)
+    val discount = calculateDiscount(orderSum, discountPct)
+    val total = calculateTotal(orderSum, tip, discount)
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
@@ -74,7 +83,7 @@ fun TipScreen() {
                 Text("25")
             }
             Spacer(Modifier.height(24.dp))
-            DiscountRadioGroup(selectedPercent = 0)
+            DiscountRadioGroup(selectedPercent = discountPct)
         }
     }
 }

@@ -130,3 +130,29 @@ fun TipScreenPreview() {
         TipScreen()
     }
 }
+
+fun calculateTip(orderSum: Double, tipPercent: Int): Double {
+    return orderSum * tipPercent / 100
+}
+
+fun discountPercent(dishCount: Int): Int {
+    return when {
+        dishCount <= 0 -> 0
+        dishCount <= 2 -> 3
+        dishCount <= 5 -> 5
+        dishCount <= 10 -> 7
+        else -> 10
+    }
+}
+
+fun calculateDiscount(orderSum: Double, percent: Int): Double {
+    return orderSum * percent / 100
+}
+
+fun calculateTotal(orderSum: Double, tip: Double, discount: Double): Double {
+    return orderSum + tip - discount
+}
+
+fun formatMoney(value: Double): String {
+    return "%.2f".format(value)
+}

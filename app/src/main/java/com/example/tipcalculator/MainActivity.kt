@@ -73,6 +73,8 @@ fun TipScreen() {
                 Text("0")
                 Text("25")
             }
+            Spacer(Modifier.height(24.dp))
+            DiscountRadioGroup(selectedPercent = 0)
         }
     }
 }
@@ -97,6 +99,27 @@ fun InputRow(
                 .background(Color(0xFFFFB6C8))
                 .padding(6.dp)
         )
+    }
+}
+
+@Composable
+fun DiscountRadioGroup(selectedPercent: Int) {
+    val options = listOf(3, 5, 7, 10)
+
+    Row(verticalAlignment = Alignment.Top) {
+        Text("Скидка:", modifier = Modifier.padding(top = 2.dp, end = 8.dp))
+        options.forEach { percent ->
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            ) {
+                RadioButton(
+                    selected = percent == selectedPercent,
+                    onClick = null
+                )
+                Text("$percent%")
+            }
+        }
     }
 }
 

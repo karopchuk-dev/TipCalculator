@@ -40,6 +40,8 @@ fun TipScreen() {
 
     var tipPercent by remember { mutableFloatStateOf(0f) }
 
+    var showTotal by remember { mutableStateOf(false) }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -63,14 +65,14 @@ fun TipScreen() {
             InputRow(
                 label = "Сумма заказа:",
                 value = orderSumText,
-                onValueChange = { orderSumText = it },
+                onValueChange = { orderSumText = it; showTotal = false },
                 fieldWidth = 120.dp
             )
             Spacer(Modifier.height(12.dp))
             InputRow(
                 label = "Количество блюд:",
                 value = dishCountText,
-                onValueChange = { dishCountText = it },
+                onValueChange = { dishCountText = it; showTotal = false },
                 fieldWidth = 60.dp
             )
 
@@ -81,6 +83,7 @@ fun TipScreen() {
                 onValueChange = { newValue ->
                     if (newValue != tipPercent) {
                         tipPercent = newValue
+                        showTotal = false
                         val newTip = calculateTip(orderSum, newValue.roundToInt())
                         scope.launch {
                             snackbarHostState.currentSnackbarData?.dismiss()
@@ -102,9 +105,17 @@ fun TipScreen() {
             DiscountRadioGroup(selectedPercent = discountPct)
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "Скидка: ${formatMoney(discount)}",
+                text = if (showTotal) {
+                    "Итого: ${formatMoney(total)}"
+                } else {
+                    "Скидка: ${formatMoney(discount)}"
+                },
                 style = MaterialTheme.typography.titleMedium
             )
+            Spacer(Modifier.height(12.dp))
+            Button(onClick = { showTotal = true }) {
+                Text("Итого")
+            }
         }
     }
 }
